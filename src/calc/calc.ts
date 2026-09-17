@@ -48,6 +48,9 @@ absolute_column ::= "$" ( "<" | ">" | int )
 single_param_function_call ::= single_param_function "(" source ")" 
 single_param_function      ::= "mean" | "sum"
 
+two_param_function_call ::= two_param_function "(" source "," " "? source ")"
+two_param_function      ::= "min" | "max" | "round" | "log" | "pow"
+
 conditional_function_call ::= "if(" predicate "," " "? source "," " "? source ")"
 predicate                 ::= source_without_range conditional_operator source_without_range
 source_without_range      ::= source_reference | single_param_function_call | conditional_function_call | algebraic_operation | float | real
@@ -131,6 +134,8 @@ const newValueProvider = (
         return ok(new Reference(ast.children[0], table));
       case 'single_param_function_call':
         return ok(new SingleParamFunctionCall(ast, table));
+      case 'two_param_function_call':
+        return ok(new TwoParamFunctionCall(ast, table));
       case 'conditional_function_call':
         return ok(new ConditionalFunctionCall(ast, table));
       case 'algebraic_operation':
