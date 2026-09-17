@@ -99,7 +99,9 @@ const mean = (value: Value): Value => {
   return new Value([[(total / count).toString()]]);
 };
 
-
+/**
+ * Round the value in the input cell to the nearest integer, producing a single cell output.
+ */
 const round = (value: Value): Value => {
   const roundedValue = FloatOrMilliseconds(value.val[0][0]).toDecimalPlaces(0);
 

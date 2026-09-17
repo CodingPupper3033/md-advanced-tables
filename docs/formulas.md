@@ -298,7 +298,7 @@ parenthesis with values inside. For example, `mean(@3$<..@3$4)`. A function
 call passes in the data from the provided range, cell, row, or column, then
 performs a caculation and provides back the result.
 
-There are two functions that can be used:
+There are three single-parameter functions that can be used:
 
 #### sum
 
@@ -319,6 +319,23 @@ single cell result.
 
 `mean` calculates the average of the provided range, row, or column. Like
 `sum` it will output a single cell result.
+
+#### round
+
+`round` rounds a single cell to the nearest whole number. Unlike `sum` and
+`mean`, its argument must resolve to one cell rather than a range.
+
+For example, this rounds each value in the first column and writes the result
+to the second column:
+
+```md
+| Value | Rounded |
+|-------+---------|
+|   1.4 |       1 |
+|   1.5 |       2 |
+|   1.6 |       2 |
+<!-- TBLFM: @I$2..@>$2=round($1) -->
+```
 
 ## Nesting
 
