@@ -341,7 +341,7 @@ and writes the results to column 2:
 #### pow
 
 `pow` raises the first value to the power of the second value. Both arguments
-must resolve to a single cell.
+must resolve to a single cell. When applied to a destination range, the formula is evaluated once for each destination cell.
 
 For example, this squares each value in column 1:
 
