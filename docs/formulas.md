@@ -298,7 +298,7 @@ parenthesis with values inside. For example, `mean(@3$<..@3$4)`. A function
 call passes in the data from the provided range, cell, row, or column, then
 performs a caculation and provides back the result.
 
-There are two functions that can be used:
+There are four functions that can be used:
 
 #### sum
 
@@ -319,6 +319,40 @@ single cell result.
 
 `mean` calculates the average of the provided range, row, or column. Like
 `sum` it will output a single cell result.
+
+#### log
+
+`log` calculates the logarithm of the first value using the second value as
+the base. Both arguments must resolve to a single cell. When applied to a
+destination range, the formula is evaluated once for each destination cell.
+
+For example, this calculates the base-10 logarithm of each value in column 1
+and writes the results to column 2:
+
+```md
+| Value | Log10 |
+|-------+-------|
+|     1 |     0 |
+|    10 |     1 |
+|   100 |     2 |
+<!-- TBLFM: @I$2..@>$2=log($1,10) -->
+```
+
+#### pow
+
+`pow` raises the first value to the power of the second value. Both arguments
+must resolve to a single cell.
+
+For example, this squares each value in column 1:
+
+```md
+| Value | Squared |
+|-------+---------|
+|     2 |       4 |
+|     3 |       9 |
+|     4 |      16 |
+<!-- TBLFM: @I$2..@>$2=pow($1,2) -->
+```
 
 ## Nesting
 
