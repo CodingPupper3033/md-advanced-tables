@@ -1968,6 +1968,116 @@ describe('Formulas', () => {
       }
     });
 
+    it('should handle two parameter log function calls one row at a time', () => {
+      const textEditor = new TextEditor([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 1   |     |',
+        '| 10  |     |',
+        '| 100 |     |',
+        '<!-- TBLFM: @I$2..@>$2=log($1,10) -->',
+      ]);
+      textEditor.setCursorPosition(new Point(1, 0));
+      const tableEditor = new TableEditor(textEditor);
+      const err = tableEditor.evaluateFormulas(defaultOptions);
+      const pos = textEditor.getCursorPosition();
+      expect(err).to.be.undefined;
+      expect(pos.row).to.equal(1);
+      expect(pos.column).to.equal(0);
+      expect(textEditor.getSelectionRange()).to.be.undefined;
+      expect(textEditor.getLines()).to.deep.equal([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 1   | 0   |',
+        '| 10  | 1   |',
+        '| 100 | 2   |',
+        '<!-- TBLFM: @I$2..@>$2=log($1,10) -->',
+      ]);
+    });
+
+    it('should reject a range passed to a two parameter log function', () => {
+      const textEditor = new TextEditor([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 1   |     |',
+        '| 10  |     |',
+        '| 100 |     |',
+        '<!-- TBLFM: @>$2=log(@2$1..@-1$1,10) -->',
+      ]);
+      textEditor.setCursorPosition(new Point(1, 0));
+      const tableEditor = new TableEditor(textEditor);
+      const err = tableEditor.evaluateFormulas(defaultOptions);
+      expect(err).to.not.be.undefined;
+      expect(err?.message).to.equal(
+        'First argument to log must be a single cell.',
+      );
+      expect(textEditor.getLines()).to.deep.equal([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 1   |     |',
+        '| 10  |     |',
+        '| 100 |     |',
+        '<!-- TBLFM: @>$2=log(@2$1..@-1$1,10) -->',
+      ]);
+    });
+
+    it('should handle two parameter pow function calls one row at a time', () => {
+      const textEditor = new TextEditor([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 2   |     |',
+        '| 3   |     |',
+        '| 4   |     |',
+        '<!-- TBLFM: @I$2..@>$2=pow($1,2) -->',
+      ]);
+      textEditor.setCursorPosition(new Point(1, 0));
+      const tableEditor = new TableEditor(textEditor);
+      const err = tableEditor.evaluateFormulas(defaultOptions);
+      expect(err).to.be.undefined;
+      expect(textEditor.getLines()).to.deep.equal([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 2   | 4   |',
+        '| 3   | 9   |',
+        '| 4   | 16  |',
+        '<!-- TBLFM: @I$2..@>$2=pow($1,2) -->',
+      ]);
+    });
+
+    it('should reject a range passed to a two parameter pow function', () => {
+      const textEditor = new TextEditor([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 2   |     |',
+        '| 3   |     |',
+        '| 4   |     |',
+        '<!-- TBLFM: @>$2=pow(@2$1..@-1$1,2) -->',
+      ]);
+      textEditor.setCursorPosition(new Point(1, 0));
+      const tableEditor = new TableEditor(textEditor);
+      const err = tableEditor.evaluateFormulas(defaultOptions);
+      expect(err).to.not.be.undefined;
+      expect(err?.message).to.equal(
+        'First argument to pow must be a single cell.',
+      );
+      expect(textEditor.getLines()).to.deep.equal([
+        'foo',
+        '| A   | B   |',
+        '| --- | --- |',
+        '| 2   |     |',
+        '| 3   |     |',
+        '| 4   |     |',
+        '<!-- TBLFM: @>$2=pow(@2$1..@-1$1,2) -->',
+      ]);
+    });
+
     it('should follow provided formatting descriptors', () => {
       {
         const textEditor = new TextEditor([

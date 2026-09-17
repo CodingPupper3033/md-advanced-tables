@@ -14,6 +14,7 @@ import { Range } from './range';
 import { Reference } from './reference';
 import { Value } from './results';
 import { SingleParamFunctionCall } from './single_param_function';
+import { TwoParamFunctionCall } from './two_param_function';
 import { Grammars, IToken } from 'ebnf';
 import { concat } from 'lodash';
 
@@ -32,7 +33,7 @@ tblfm_line   ::= "<!-- TBLFM: " formula_list " -->"
 formula_list ::= formula ( "::" formula_list )?
 formula      ::= destination "=" source display_directive?
 
-source           ::= range | source_reference | single_param_function_call | conditional_function_call | algebraic_operation | float | real
+source           ::= range | source_reference | single_param_function_call | two_param_function_call | conditional_function_call | algebraic_operation | float | real
 range            ::= source_reference ".." source_reference
 source_reference ::= absolute_reference | relative_reference
 destination      ::= range | absolute_reference
@@ -49,7 +50,7 @@ single_param_function_call ::= single_param_function "(" source ")"
 single_param_function      ::= "mean" | "sum"
 
 two_param_function_call ::= two_param_function "(" source "," " "? source ")"
-two_param_function      ::= "min" | "max" | "round" | "log" | "pow"
+two_param_function      ::=  "log" | "pow"
 
 conditional_function_call ::= "if(" predicate "," " "? source "," " "? source ")"
 predicate                 ::= source_without_range conditional_operator source_without_range
