@@ -54,7 +54,7 @@ two_param_function      ::=  "log" | "pow"
 
 conditional_function_call ::= "if(" predicate "," " "? source "," " "? source ")"
 predicate                 ::= source_without_range conditional_operator source_without_range
-source_without_range      ::= source_reference | single_param_function_call | conditional_function_call | algebraic_operation | float | real
+source_without_range      ::= source_reference | single_param_function_call | two_param_function_call | conditional_function_call | algebraic_operation | float | real
 conditional_operator      ::= ">" | "<" | ">=" | "<=" | "==" | "!="
 
 algebraic_operation ::= "(" source " "? algebraic_operator " "? source ")"

@@ -1544,6 +1544,30 @@ describe('Formulas', () => {
           '<!-- TBLFM: $3=if(4<$2, $1, 7) -->',
         ]);
       }
+      {
+        const textEditor = new TextEditor([
+          'foo',
+          '| A   | B   |',
+          '| --- | --- |',
+          '| 1   |     |',
+          '| 10  |     |',
+          '| 100 |     |',
+          '<!-- TBLFM: @I$2..@>$2=if(log($1,10)>1, $1, 0) -->',
+        ]);
+        textEditor.setCursorPosition(new Point(1, 0));
+        const tableEditor = new TableEditor(textEditor);
+        const err = tableEditor.evaluateFormulas(defaultOptions);
+        expect(err).to.be.undefined;
+        expect(textEditor.getLines()).to.deep.equal([
+          'foo',
+          '| A   | B   |',
+          '| --- | --- |',
+          '| 1   | 0   |',
+          '| 10  | 0   |',
+          '| 100 | 100 |',
+          '<!-- TBLFM: @I$2..@>$2=if(log($1,10)>1, $1, 0) -->',
+        ]);
+      }
     });
 
     it('should handle assigning a range to a single cell', () => {
