@@ -2169,6 +2169,48 @@ describe('Formulas', () => {
       }
     });
 
+    it('should round single parameter values one row at a time', () => {
+      const textEditor = new TextEditor([
+        'foo',
+        '| Value | Rounded |',
+        '| ----- | ------- |',
+        '| 1.4   |         |',
+        '| 1.5   |         |',
+        '| 1.6   |         |',
+        '<!-- TBLFM: @I$2..@>$2=round($1) -->',
+      ]);
+      textEditor.setCursorPosition(new Point(1, 0));
+      const tableEditor = new TableEditor(textEditor);
+      const err = tableEditor.evaluateFormulas(defaultOptions);
+      expect(err).to.be.undefined;
+      expect(textEditor.getLines()).to.deep.equal([
+        'foo',
+        '| Value | Rounded |',
+        '| ----- | ------- |',
+        '| 1.4   | 1       |',
+        '| 1.5   | 2       |',
+        '| 1.6   | 2       |',
+        '<!-- TBLFM: @I$2..@>$2=round($1) -->',
+      ]);
+    });
+
+    it('should reject a range passed to round', () => {
+      const textEditor = new TextEditor([
+        'foo',
+        '| Value | Rounded |',
+        '| ----- | ------- |',
+        '| 1.4   |         |',
+        '| 1.5   |         |',
+        '| 1.6   |         |',
+        '<!-- TBLFM: @>$2=round(@2$1..@-1$1) -->',
+      ]);
+      textEditor.setCursorPosition(new Point(1, 0));
+      const tableEditor = new TableEditor(textEditor);
+      const err = tableEditor.evaluateFormulas(defaultOptions);
+      expect(err).to.not.be.undefined;
+      expect(err?.message).to.equal('Argument to round must be a single cell.');
+    });
+
     it('should parse multiple formulas on the same line', () => {
       {
         const textEditor = new TextEditor([

@@ -46,7 +46,7 @@ absolute_row ::= "@" ( "I" | "<" | ">" | int )
 absolute_column ::= "$" ( "<" | ">" | int )
 
 single_param_function_call ::= single_param_function "(" source ")" 
-single_param_function      ::= "mean" | "sum"
+single_param_function      ::= "mean" | "sum" | "round"
 
 conditional_function_call ::= "if(" predicate "," " "? source "," " "? source ")"
 predicate                 ::= source_without_range conditional_operator source_without_range

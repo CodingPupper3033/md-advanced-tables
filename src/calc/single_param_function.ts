@@ -1,4 +1,4 @@
-import { ok, Result } from '../neverthrow/neverthrow';
+import { err, ok, Result } from '../neverthrow/neverthrow';
 import { Table } from '../table';
 import { Cell, checkChildLength, checkType, ValueProvider } from './ast_utils';
 import { Source } from './calc';
@@ -8,6 +8,7 @@ import { IToken } from 'ebnf';
 
 export class SingleParamFunctionCall implements ValueProvider {
   private readonly param: Source;
+  private readonly functionName: string;
   private readonly op;
 
   constructor(ast: IToken, table: Table) {
@@ -27,12 +28,16 @@ export class SingleParamFunctionCall implements ValueProvider {
     }
 
     const functionName = ast.children[0].text;
+    this.functionName = functionName;
     switch (functionName) {
       case 'sum':
         this.op = sum;
         break;
       case 'mean':
         this.op = mean;
+        break;
+      case 'round':
+        this.op = round;
         break;
       default:
         throw Error('Unknown single param function call: ' + functionName);
@@ -42,11 +47,13 @@ export class SingleParamFunctionCall implements ValueProvider {
   }
 
   public getValue = (table: Table, cell: Cell): Result<Value, Error> =>
-    this.param.getValue(table, cell).andThen((sourceData) =>
-      // The operation functions do not throw errors because data arity has
-      // already been validated.
-      ok(this.op(sourceData)),
-    );
+    this.param.getValue(table, cell).andThen((sourceData) => {
+      if (this.functionName === 'round' && !sourceData.getArity().isCell()) {
+        return err(new Error('Argument to round must be a single cell.'));
+      }
+
+      return ok(this.op(sourceData));
+    });
 }
 
 /**
@@ -90,4 +97,11 @@ const mean = (value: Value): Value => {
   );
 
   return new Value([[(total / count).toString()]]);
+};
+
+
+const round = (value: Value): Value => {
+  const roundedValue = FloatOrMilliseconds(value.val[0][0]).toDecimalPlaces(0);
+
+  return new Value([[roundedValue.toString()]]);
 };
